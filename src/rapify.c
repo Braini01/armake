@@ -671,7 +671,7 @@ int rapify_class(FILE *f_source, FILE *f_target) {
 }
 
 
-int rapify_file(char *source, char *target, char *includefolder) {
+int rapify_file(char *source, char *target) {
     /*
      * Resolves macros/includes and rapifies the given file. If source and
      * target are identical, the target is overwritten.
@@ -692,7 +692,7 @@ int rapify_file(char *source, char *target, char *includefolder) {
 #ifdef _WIN32
     char temp_name[2048];
     if (!GetTempFileName(getenv("HOMEPATH"), "amk", 0, temp_name)) {
-        errorf("Failed to get temp file name.\n");
+        errorf("Failed to get temp file name (system error %i).\n", GetLastError());
         return 1;
     }
     f_temp = fopen(temp_name, "w+");
@@ -713,7 +713,7 @@ int rapify_file(char *source, char *target, char *includefolder) {
         constants[i].value = 0;
     }
 
-    success = preprocess(source, f_temp, includefolder, constants);
+    success = preprocess(source, f_temp, constants);
 
     for (i = 0; i < MAXCONSTS && constants[i].value != 0; i++)
         free(constants[i].value);

@@ -1,6 +1,9 @@
 armake
 ======
 
+[![](https://img.shields.io/travis/KoffeinFlummi/armake.svg)](https://travis-ci.org/KoffeinFlummi/armake) [![](https://img.shields.io/github/license/KoffeinFlummi/armake.svg)](https://github.com/KoffeinFlummi/armake/blob/master/LICENSE) [![](https://img.shields.io/badge/PPA-koffeinflummi%2Farmake-orange.svg)](https://launchpad.net/~koffeinflummi/+archive/ubuntu/armake) [![](https://img.shields.io/aur/version/armake-git.svg)](https://aur.archlinux.org/packages/armake-git)
+
+
 A C implementation of Arma modding tools (PAA conversion, binarization/rapification, PBO packing). (WIP)
 
 
@@ -10,7 +13,7 @@ A C implementation of Arma modding tools (PAA conversion, binarization/rapificat
 
 ```
 $ make
-# make install
+$ sudo make install
 ```
 
 There are no dependencies other than a C lib with an fts library (like glibc) on \*nix systems.
@@ -19,10 +22,18 @@ There are no dependencies other than a C lib with an fts library (like glibc) on
 
 [PKGBUILD](https://aur.archlinux.org/packages/armake-git/)
 
-Example (using pacaur):
+```
+$ pacaur -S armake-git   # or use yaourt or whatever AUR helper you use
+```
+
+#### Ubuntu & Other Debian Derivatives
+
+[PPA](https://launchpad.net/~koffeinflummi/+archive/ubuntu/armake)
 
 ```
-$ pacaur -S armake-git
+$ sudo add-apt-repository ppa:koffeinflummi/armake
+$ sudo apt-get update
+$ sudo apt-get install armake
 ```
 
 
@@ -34,9 +45,9 @@ See `$ armake --help` or [src/usage](https://github.com/KoffeinFlummi/armake/blo
 ### Credits
 
 - [Mikero](https://dev.withsix.com/projects/mikero-pbodll) for his great documentation of the various file formats used.
-- [T_D](https://github.com/Braini01) for great documentation, lots of pointers and even some code contributions
-- [jonpas](https://github.com/jonpas) for all kinds of help with development and testing
-- [kju](https://forums.bistudio.com/user/768005-kju/) for some pointers and "PR work"
+- [T_D](https://github.com/Braini01) for great documentation, lots of pointers and even some code contributions.
+- [jonpas](https://github.com/jonpas) for all kinds of help with development and testing.
+- [kju](https://forums.bistudio.com/user/768005-kju/) for some pointers and "PR work".
 
 
 ### Used Libraries

@@ -1,10 +1,11 @@
-PREFIX = ""
+VERSION = 0.2.1
+DESTDIR = ""
 BIN = bin
 SRC = src
 LIB = lib
 EXT = ""
 CC = gcc
-CFLAGS = -Wall -std=gnu89 -ggdb
+CFLAGS = -Wall -DVERSION=\"v$(VERSION)\" -std=gnu89 -ggdb
 CLIBS = -I$(LIB) -lm
 
 $(BIN)/armake: \
@@ -27,19 +28,23 @@ $(LIB)/%.o: $(LIB)/%.c
 
 all: $(BIN)/armake
 
+test: $(BIN)/armake FORCE
+	@./test/runall.sh
+
 install: all
-	install -m 0755 $(BIN)/armake $(PREFIX)/usr/bin
+	mkdir -p $(DESTDIR)/usr/bin
+	install -m 0755 $(BIN)/armake $(DESTDIR)/usr/bin
 
 uninstall:
-	rm $(PREFIX)/usr/bin/armake
+	rm $(DESTDIR)/usr/bin/armake
 
 clean:
 	rm -rf $(BIN) $(SRC)/*.o $(LIB)/*.o
 
-win32: clean
+win32:
 	make CC=i686-w64-mingw32-gcc EXT=.exe
 
-win64: clean
+win64:
 	make CC=x86_64-w64-mingw32-gcc EXT=.exe
 
 docopt:
@@ -50,10 +55,14 @@ docopt:
 	cat tmp/license > src/docopt.h
 	echo -e "#pragma once\n\n" >> src/docopt.h
 	grep -A 2 "#" tmp/docopt >> src/docopt.h
+	echo "#define MAXEXCLUDEFILES 32" >> src/docopt.h
+	echo "#define MAXINCLUDEFOLDERS 32" >> src/docopt.h
 	echo -e "#define MAXWARNINGS 32\n\n" >> src/docopt.h
 	grep -Pzo "(?s)typedef struct.*?\{.*?\} [a-zA-Z]*?;\n\n" tmp/docopt >> src/docopt.h
 	sed -ie 's/\x0//g' src/docopt.h # I don't know why I suddenly need this
 	echo -e "\nDocoptArgs args;" >> src/docopt.h
+	echo "char exclude_files[MAXEXCLUDEFILES][512];" >> src/docopt.h
+	echo "char include_folders[MAXINCLUDEFOLDERS][512];" >> src/docopt.h
 	echo -e "char muted_warnings[MAXWARNINGS][512];\n\n" >> src/docopt.h
 	grep -E '^[a-zA-Z].*\(.*|^[^(]+\)' tmp/docopt >> src/docopt.h
 	sed -Ei 's/\)\s*\{/);\n/' src/docopt.h
@@ -61,3 +70,10 @@ docopt:
 	echo -e "#include \"docopt.h\"\n\n" >> src/docopt.c
 	sed '/typedef struct/,/\} [a-zA-Z]*;/d' tmp/docopt >> src/docopt.c
 	rm -rf tmp
+
+debian: clean FORCE
+	tar -czf ../armake_$(VERSION).orig.tar.gz .
+	debuild -S -sa
+	dput ppa:koffeinflummi/armake ../armake_*_source.changes
+
+FORCE:
