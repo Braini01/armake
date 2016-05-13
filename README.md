@@ -1,7 +1,7 @@
 armake
 ======
 
-[![](https://img.shields.io/travis/KoffeinFlummi/armake.svg)](https://travis-ci.org/KoffeinFlummi/armake) [![](https://img.shields.io/github/license/KoffeinFlummi/armake.svg)](https://github.com/KoffeinFlummi/armake/blob/master/LICENSE) [![](https://img.shields.io/badge/PPA-koffeinflummi%2Farmake-orange.svg)](https://launchpad.net/~koffeinflummi/+archive/ubuntu/armake) [![](https://img.shields.io/aur/version/armake-git.svg)](https://aur.archlinux.org/packages/armake-git)
+[![](https://img.shields.io/travis/KoffeinFlummi/armake.svg)](https://travis-ci.org/KoffeinFlummi/armake) [![](https://img.shields.io/github/license/KoffeinFlummi/armake.svg)](https://github.com/KoffeinFlummi/armake/blob/master/LICENSE) [![](https://img.shields.io/badge/PPA-koffeinflummi%2Farmake-orange.svg)](https://launchpad.net/~koffeinflummi/+archive/ubuntu/armake) [![](https://img.shields.io/aur/version/armake.svg)](https://aur.archlinux.org/packages/armake)
 
 
 A C implementation of Arma modding tools (PAA conversion, binarization/rapification, PBO packing). (WIP)
@@ -20,10 +20,16 @@ There are no dependencies other than a C lib with an fts library (like glibc) on
 
 #### Arch Linux
 
-[PKGBUILD](https://aur.archlinux.org/packages/armake-git/)
-
+[PKGBUILD](https://aur.archlinux.org/packages/armake/)
 ```
-$ pacaur -S armake-git   # or use yaourt or whatever AUR helper you use
+$ pacaur -S armake      # or use yaourt or whatever AUR helper you use
+```
+
+or
+
+[PKGBUILD (development)](https://aur.archlinux.org/packages/armake-git/)
+```
+$ pacaur -S armake-git
 ```
 
 #### Ubuntu & Other Debian Derivatives

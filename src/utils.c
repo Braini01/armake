@@ -62,6 +62,8 @@ void warningf(char *format, ...) {
         fprintf(stderr, "    (encountered while reading %s)\n", filename);
     else if (current_operation == OP_UNPACK)
         fprintf(stderr, "    (encountered while unpacking %s)\n", filename);
+    else if (current_operation == OP_DERAPIFY)
+        fprintf(stderr, "    (encountered while derapifying %s)\n", filename);
 }
 
 
@@ -93,7 +95,6 @@ void nwarningf(char *name, char *format, ...) {
 void errorf(char *format, ...) {
     extern int current_operation;
     extern char current_target[2048];
-    char filename[2048];
     char buffer[4096];
     va_list argptr;
 
@@ -102,26 +103,6 @@ void errorf(char *format, ...) {
     va_end(argptr);
 
     fprintf(stderr, "%serror:%s %s", COLOR_RED, COLOR_RESET, buffer);
-
-    if (strchr(current_target, PATHSEP) == NULL)
-        strcpy(filename, current_target);
-    else
-        strcpy(filename, strrchr(current_target, PATHSEP) + 1);
-
-    if (current_operation == OP_BUILD)
-        fprintf(stderr, "    (encountered while building %s)\n", filename);
-    else if (current_operation == OP_PREPROCESS)
-        fprintf(stderr, "    (encountered while preprocessing %s)\n", filename);
-    else if (current_operation == OP_RAPIFY)
-        fprintf(stderr, "    (encountered while rapifying %s)\n", filename);
-    else if (current_operation == OP_P3D)
-        fprintf(stderr, "    (encountered while converting %s)\n", filename);
-    else if (current_operation == OP_MODELCONFIG)
-        fprintf(stderr, "    (encountered while reading model config for %s)\n", filename);
-    else if (current_operation == OP_MATERIAL)
-        fprintf(stderr, "    (encountered while reading %s)\n", filename);
-    else if (current_operation == OP_UNPACK)
-        fprintf(stderr, "    (encountered while unpacking %s)\n", filename);
 }
 
 
@@ -355,15 +336,50 @@ int skip_whitespace(FILE *f) {
 }
 
 
+void escape_string(char *buffer, size_t buffsize) {
+    char *tmp;
+    char *ptr;
+    char tmp_array[3];
+
+    tmp = malloc(buffsize * 2);
+    tmp[0] = 0;
+    tmp_array[2] = 0;
+
+    for (ptr = buffer; *ptr != 0; ptr++) {
+        tmp_array[0] = '\\';
+        if (*ptr == '\t') {
+            tmp_array[1] = 't';
+        } else if (*ptr == '\r') {
+            tmp_array[1] = 'r';
+        } else if (*ptr == '\n') {
+            tmp_array[1] = 'n';
+        } else if (*ptr == '"') {
+            tmp_array[1] = '"';
+        } else {
+            tmp_array[0] = *ptr;
+            tmp_array[1] = 0;
+        }
+        strcat(tmp, tmp_array);
+    }
+
+    strncpy(buffer, tmp, buffsize);
+
+    free(tmp);
+}
+
+
 void unescape_string(char *buffer, size_t buffsize) {
     char *tmp;
     char *ptr;
     char tmp_array[2];
     char current;
+    char quote;
 
     tmp = malloc(buffsize);
     tmp[0] = 0;
     tmp_array[1] = 0;
+
+    quote = buffer[0];
 
     buffer[strlen(buffer) - 1] = 0;
     for (ptr = buffer + 1; *ptr != 0; ptr++) {
@@ -377,9 +393,7 @@ void unescape_string(char *buffer, size_t buffsize) {
         } else if (*ptr == '\\' && *(ptr + 1) == '\'') {
             current = '\'';
             ptr++;
-        } else if (*ptr == '"' && *(ptr + 1) == '"') {
-            ptr++;
-        } else if (*ptr == '\'' && *(ptr + 1) == '\'') {
+        } else if (*ptr == quote && *(ptr + 1) == quote) {
             ptr++;
         }
 
